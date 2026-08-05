@@ -1,9 +1,11 @@
 # ReBrand Fonepay QR
 
-Upload a Fonepay (or any EMV merchant) QR, add a logo, colours, business name and
-caption, and download a **branded QR that still pays the exact same account**.
+Upload a Fonepay (or any EMV merchant) QR **or paste a link**, add a logo, colours,
+business name and caption, style it (dot/eye shapes, gradient, presets), and download a
+**branded QR that still pays the same account / opens the same link** — in PNG, JPG, WebP
+(3×) or true-vector SVG.
 
-Everything runs in the browser — the QR image is never uploaded to a server.
+Everything runs in the browser — nothing is uploaded to a server.
 
 Live: **https://rebrandfonepayqr.vijaykarn.com.np/**
 

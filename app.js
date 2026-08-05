@@ -2,6 +2,7 @@ import { describe } from './emv.js';
 
 // State
 let payload = null;   // the exact decoded QR text — never mutated
+let isLink = false;   // true when the payload was typed (a link/text) rather than decoded
 let logoImg = null;
 let dotShape = 'square';  // square | rounded | dots
 let eyeShape = 'square';  // square | rounded
@@ -9,6 +10,7 @@ let eyeShape = 'square';  // square | rounded
 const $ = (id) => document.getElementById(id);
 const els = {
   qrFile: $('qrFile'), logoFile: $('logoFile'), drop: $('drop'),
+  linkInput: $('linkInput'), linkGo: $('linkGo'),
   fg: $('fg'), fgHex: $('fgHex'), bg: $('bg'), bgHex: $('bgHex'), tx: $('tx'), txHex: $('txHex'),
   fg2: $('fg2'), fg2Hex: $('fg2Hex'), fg2Field: $('fg2Field'), gradient: $('gradient'),
   dotShapeEl: $('dotShape'), eyeShapeEl: $('eyeShape'), presets: $('presets'), surprise: $('surprise'),
@@ -45,6 +47,8 @@ function loadQR(file) {
       return;
     }
     payload = code.data;
+    isLink = false;
+    els.linkInput.value = '';
     showDetected(describe(payload));
     render();
   };
@@ -74,6 +78,25 @@ function showDetected(info) {
     : `⚠ Read a QR, but its checksum doesn't look like a standard Fonepay/EMV QR. You can still restyle it — just test-scan before using.`;
   // prefill merchant caption line
   if (info.merchant) els.merchant.value = info.merchant;
+}
+
+// ---- Make a QR from a typed link / text --------------------------------------
+els.linkGo.addEventListener('click', () => setLink(els.linkInput.value));
+els.linkInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') setLink(els.linkInput.value); });
+
+function setLink(raw) {
+  let v = raw.trim();
+  if (!v) return;
+  // Bare domain (no scheme, has a dot, no spaces) → assume https so it opens as a link.
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(v) && /^[^\s]+\.[^\s]{2,}$/.test(v)) v = 'https://' + v;
+  payload = v;
+  isLink = true;
+  els.empty.hidden = true;
+  els.controls.hidden = false;
+  els.detected.hidden = false;
+  els.detected.className = 'banner ok';
+  els.detected.innerHTML = `🔗 Link QR — encodes <strong>${escapeHtml(v)}</strong>. Style it below, then download.`;
+  render();
 }
 
 // ---- Logo --------------------------------------------------------------------
@@ -249,7 +272,9 @@ function verify() {
   const code = window.jsQR(img.data, cv.width, cv.height);
   if (code && code.data === payload) {
     els.verify.className = 'verify ok';
-    els.verify.textContent = '✓ Verified — the redesigned QR still scans to the original account.';
+    els.verify.textContent = isLink
+      ? '✓ Verified — the QR scans to your link.'
+      : '✓ Verified — the redesigned QR still scans to the original account.';
     els.download.disabled = false;
   } else {
     els.verify.className = 'verify bad';
