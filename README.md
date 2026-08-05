@@ -7,7 +7,19 @@ business name and caption, style it (dot/eye shapes, gradient, presets), and dow
 
 Everything runs in the browser — nothing is uploaded to a server.
 
-Live: **https://rebrandfonepayqr.vijaykarn.com.np/**
+> **Status:** built, not yet deployed. Planned home: `rebrandfonepayqr.vijaykarn.com.np`.
+> For now, [run it locally](#run-it).
+
+## Features
+
+- **Two inputs** — upload a Fonepay/EMV QR image, or paste a link/text to make one.
+- **Design studio** — logo overlay, per-element colours (with hex), gradient fills,
+  square/rounded/dot module shapes, styled finder "eyes", one-click **style presets**
+  and a **Surprise me** generator.
+- **Scan-safe** — the output is re-scanned in-browser; download unlocks only when it
+  decodes back to the original payload.
+- **Export** — PNG, JPG, WebP (3× hi-res) and true-vector **SVG**.
+- **Private & offline** — 100% client-side; fonts and libraries are self-hosted (no CDN).
 
 ## How it works
 
