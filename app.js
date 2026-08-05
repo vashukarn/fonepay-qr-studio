@@ -3,11 +3,15 @@ import { describe } from './emv.js';
 // State
 let payload = null;   // the exact decoded QR text — never mutated
 let logoImg = null;
+let dotShape = 'square';  // square | rounded | dots
+let eyeShape = 'square';  // square | rounded
 
 const $ = (id) => document.getElementById(id);
 const els = {
   qrFile: $('qrFile'), logoFile: $('logoFile'), drop: $('drop'),
   fg: $('fg'), fgHex: $('fgHex'), bg: $('bg'), bgHex: $('bgHex'), tx: $('tx'), txHex: $('txHex'),
+  fg2: $('fg2'), fg2Hex: $('fg2Hex'), fg2Field: $('fg2Field'), gradient: $('gradient'),
+  dotShapeEl: $('dotShape'), eyeShapeEl: $('eyeShape'), presets: $('presets'), surprise: $('surprise'),
   logoSize: $('logoSize'), caption: $('caption'), merchant: $('merchant'),
   showMerchant: $('showMerchant'),
   canvas: $('canvas'), download: $('download'), removeLogo: $('removeLogo'),
@@ -97,6 +101,57 @@ function bindColor(picker, hex) {
 bindColor(els.fg, els.fgHex);
 bindColor(els.bg, els.bgHex);
 bindColor(els.tx, els.txHex);
+bindColor(els.fg2, els.fg2Hex);
+
+// ---- Segmented controls (dot shape / eye shape) ------------------------------
+function wireSeg(container, set) {
+  container.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    container.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    set(b.dataset.val); render();
+  });
+}
+wireSeg(els.dotShapeEl, (v) => { dotShape = v; });
+wireSeg(els.eyeShapeEl, (v) => { eyeShape = v; });
+
+els.gradient.addEventListener('change', () => { els.fg2Field.hidden = !els.gradient.checked; render(); });
+
+// ---- Style presets + "Surprise me" ------------------------------------------
+const PRESETS = {
+  classic: { dot: 'square',  eye: 'square',  grad: false, fg: '#0a0a0b', fg2: '#0a0a0b', bg: '#ffffff', tx: '#0a0a0b' },
+  soft:    { dot: 'rounded', eye: 'rounded', grad: false, fg: '#2b2b2b', fg2: '#2b2b2b', bg: '#ffffff', tx: '#2b2b2b' },
+  dots:    { dot: 'dots',    eye: 'rounded', grad: false, fg: '#1d4ed8', fg2: '#1d4ed8', bg: '#ffffff', tx: '#1d4ed8' },
+  neon:    { dot: 'rounded', eye: 'rounded', grad: true,  fg: '#fc4778', fg2: '#7c3aed', bg: '#0e0f13', tx: '#ffffff' },
+  sunset:  { dot: 'dots',    eye: 'rounded', grad: true,  fg: '#f97316', fg2: '#db2777', bg: '#fff7ed', tx: '#9a3412' },
+};
+
+function applyStyle(p) {
+  dotShape = p.dot; eyeShape = p.eye;
+  setSeg(els.dotShapeEl, p.dot); setSeg(els.eyeShapeEl, p.eye);
+  setColor(els.fg, els.fgHex, p.fg);
+  setColor(els.fg2, els.fg2Hex, p.fg2);
+  setColor(els.bg, els.bgHex, p.bg);
+  setColor(els.tx, els.txHex, p.tx);
+  els.gradient.checked = p.grad; els.fg2Field.hidden = !p.grad;
+  render();
+}
+const setSeg = (c, v) => c.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.val === v));
+const setColor = (picker, hex, v) => { picker.value = v; hex.value = v.toUpperCase(); hex.classList.remove('invalid'); };
+
+els.presets.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-preset]'); if (b && PRESETS[b.dataset.preset]) applyStyle(PRESETS[b.dataset.preset]);
+});
+
+// A curated pool so "Surprise me" always lands on something tasteful & high-contrast.
+const SURPRISE = [
+  ...Object.values(PRESETS),
+  { dot: 'dots', eye: 'rounded', grad: true, fg: '#06b6d4', fg2: '#3b82f6', bg: '#ffffff', tx: '#0e7490' },
+  { dot: 'rounded', eye: 'square', grad: false, fg: '#16a34a', fg2: '#16a34a', bg: '#f0fdf4', tx: '#166534' },
+  { dot: 'rounded', eye: 'rounded', grad: true, fg: '#e11d48', fg2: '#f59e0b', bg: '#fff7ed', tx: '#9f1239' },
+  { dot: 'dots', eye: 'rounded', grad: true, fg: '#8b5cf6', fg2: '#ec4899', bg: '#faf5ff', tx: '#6d28d9' },
+  { dot: 'square', eye: 'rounded', grad: false, fg: '#ffffff', fg2: '#ffffff', bg: '#111827', tx: '#f9fafb' },
+];
+els.surprise.addEventListener('click', () => applyStyle(SURPRISE[Math.floor(Math.random() * SURPRISE.length)]));
 
 // ---- Re-render on any other control change -----------------------------------
 ['logoSize', 'caption', 'merchant', 'showMerchant'].forEach((k) =>
@@ -144,17 +199,42 @@ function render() {
     ctx.fillText(merchant, W / 2, pad + 30);
   }
 
-  // QR modules
+  // QR modules — shape + optional gradient. Finder "eyes" render solid so they
+  // stay scannable even when the body is dots/rounded.
   const ox = pad, oy = headerH;
-  ctx.fillStyle = fg;
+  let fill = fg;
+  if (els.gradient.checked) {
+    const g = ctx.createLinearGradient(ox, oy, ox + QR, oy + QR);
+    g.addColorStop(0, fg); g.addColorStop(1, els.fg2.value);
+    fill = g;
+  }
+  ctx.fillStyle = fill;
+
+  const customEyes = !(dotShape === 'square' && eyeShape === 'square');
+  const finders = [[0, 0], [0, n - 7], [n - 7, 0]];
+  const inFinder = (r, c) => finders.some(([fr, fc]) => r >= fr && r < fr + 7 && c >= fc && c < fc + 7);
+
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
-      if (qr.isDark(r, c)) {
-        const x = ox + (c + quiet) * cell;
-        const y = oy + (r + quiet) * cell;
+      if (!qr.isDark(r, c)) continue;
+      if (customEyes && inFinder(r, c)) continue; // eyes drawn separately below
+      const x = ox + (c + quiet) * cell, y = oy + (r + quiet) * cell;
+      if (dotShape === 'dots') {
+        ctx.beginPath();
+        ctx.arc(x + cell / 2, y + cell / 2, cell * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (dotShape === 'rounded') {
+        roundRect(ctx, x, y, cell, cell, cell * 0.38); ctx.fill();
+      } else {
         ctx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(cell), Math.ceil(cell));
       }
     }
+  }
+  if (customEyes) {
+    for (const [fr, fc] of finders) {
+      drawEye(ctx, ox + (fc + quiet) * cell, oy + (fr + quiet) * cell, cell, eyeShape, fill, bg);
+    }
+    ctx.fillStyle = fill;
   }
 
   // center logo
@@ -220,6 +300,18 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
 }
+// Draw a finder pattern (7x7 ring + 3x3 centre) as a solid square or rounded eye.
+function drawEye(ctx, x, y, cell, style, fill, bg) {
+  const s = 7 * cell;
+  const rr = style === 'rounded';
+  ctx.fillStyle = fill;
+  rr ? (roundRect(ctx, x, y, s, s, cell * 1.75), ctx.fill()) : ctx.fillRect(x, y, s, s);
+  ctx.fillStyle = bg;
+  rr ? (roundRect(ctx, x + cell, y + cell, 5 * cell, 5 * cell, cell * 1.15), ctx.fill()) : ctx.fillRect(x + cell, y + cell, 5 * cell, 5 * cell);
+  ctx.fillStyle = fill;
+  rr ? (roundRect(ctx, x + 2 * cell, y + 2 * cell, 3 * cell, 3 * cell, cell * 0.75), ctx.fill()) : ctx.fillRect(x + 2 * cell, y + 2 * cell, 3 * cell, 3 * cell);
+}
+
 function fitContain(img, maxW, maxH) {
   const s = Math.min(maxW / img.width, maxH / img.height);
   return { w: img.width * s, h: img.height * s };

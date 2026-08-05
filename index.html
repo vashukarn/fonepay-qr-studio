@@ -68,6 +68,47 @@
 
       <div id="controls" hidden>
         <div class="field">
+          <label>Style presets</label>
+          <div class="chips" id="presets">
+            <button type="button" class="chip" data-preset="classic">Classic</button>
+            <button type="button" class="chip" data-preset="soft">Soft</button>
+            <button type="button" class="chip" data-preset="dots">Dots</button>
+            <button type="button" class="chip" data-preset="neon">Neon</button>
+            <button type="button" class="chip" data-preset="sunset">Sunset</button>
+            <button type="button" class="chip surprise" id="surprise">✦ Surprise me</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Dot shape</label>
+          <div class="seg" id="dotShape" role="group" aria-label="Dot shape">
+            <button type="button" data-val="square" class="on">Square</button>
+            <button type="button" data-val="rounded">Rounded</button>
+            <button type="button" data-val="dots">Dots</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Eye shape</label>
+          <div class="seg" id="eyeShape" role="group" aria-label="Finder eye shape">
+            <button type="button" data-val="square" class="on">Square</button>
+            <button type="button" data-val="rounded">Rounded</button>
+          </div>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="gradient">
+          Gradient QR colour
+        </label>
+        <div class="field" id="fg2Field" hidden>
+          <label for="fg2">Second colour</label>
+          <div class="color-row">
+            <input type="color" id="fg2" value="#7c3aed">
+            <input type="text" id="fg2Hex" class="hex" value="#7C3AED" maxlength="7" spellcheck="false" aria-label="Second colour hex">
+          </div>
+        </div>
+
+        <div class="field">
           <label>Your logo (optional)</label>
           <div class="row">
             <label class="btn file">

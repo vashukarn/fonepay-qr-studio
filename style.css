@@ -122,6 +122,28 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .check { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--ink); cursor: pointer; }
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
+/* Style presets */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 500; font-family: var(--font-body);
+  cursor: pointer; transition: border-color .3s var(--ease), color .3s var(--ease), background .3s var(--ease), transform .2s var(--ease);
+}
+.chip:hover { border-color: var(--ink); transform: translateY(-1px); }
+.chip.surprise { border-color: var(--accent); color: var(--accent); }
+.chip.surprise:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Segmented control */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button {
+  border: 0; background: transparent; color: var(--muted); cursor: pointer;
+  padding: 9px 16px; font-size: 13.5px; font-weight: 500; font-family: var(--font-body);
+  border-right: 1px solid var(--line); transition: background .25s var(--ease), color .25s var(--ease);
+}
+.seg button:last-child { border-right: 0; }
+.seg button:hover { color: var(--ink); }
+.seg button.on { background: var(--accent); color: #fff; }
+
 /* Buttons */
 .btn {
   border: 1px solid var(--line); background: var(--surface); color: var(--ink);
