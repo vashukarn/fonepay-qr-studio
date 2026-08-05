@@ -1,9 +1,11 @@
-# Fonepay QR Studio
+# ReBrand Fonepay QR
 
-Upload a Fonepay (or any EMV merchant) QR, add a logo, colours and a caption, and
-download a **branded QR that still pays the exact same account**.
+Upload a Fonepay (or any EMV merchant) QR, add a logo, colours, business name and
+caption, and download a **branded QR that still pays the exact same account**.
 
 Everything runs in the browser — the QR image is never uploaded to a server.
+
+Live: **https://rebrandfonepayqr.vijaykarn.com.np/**
 
 ## How it works
 
@@ -37,11 +39,19 @@ node test.mjs
 
 | File | Purpose |
 |------|---------|
-| `index.html` / `style.css` | UI |
+| `index.html` / `style.css` | UI + hero + SEO tags |
 | `app.js` | upload → decode → render → verify → download |
 | `emv.js` | EMV TLV parsing + CRC-16 (shared by app and tests) |
 | `test.mjs` | self-check for the EMV/CRC logic |
 | `lib/` | vendored `jsQR` + `qrcode-generator` (no CDN at runtime) |
+| `lib/fonts/` | self-hosted Clash Display + Switzer (Fontshare, woff2) |
+| `favicon.svg` `robots.txt` `sitemap.xml` `og-image.png` | SEO / social assets |
+
+## Design & fonts
+
+Light editorial theme (ground `#f1f1f1`, ink `#2b2b2b`, accent `#fc4778`) with **Clash
+Display** and **Switzer** from [Fontshare](https://fontshare.com) — free for commercial use,
+self-hosted in `lib/fonts/` so there is **no CDN at runtime**.
 
 ## Note
 

@@ -1,3 +1,10 @@
+/* Self-hosted fonts (Fontshare — free for commercial use, no CDN at runtime). */
+@font-face { font-family: "Clash Display"; src: url("lib/fonts/clash-display-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Clash Display"; src: url("lib/fonts/clash-display-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Switzer"; src: url("lib/fonts/switzer-300.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Switzer"; src: url("lib/fonts/switzer-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Switzer"; src: url("lib/fonts/switzer-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
 /* Visual language adapted from incredibles.dev:
    light editorial ground (#f1f1f1), ink #2b2b2b, hot-pink accent #fc4778,
    an oversized display face with tight tracking, and easeOutQuint motion.
@@ -40,27 +47,28 @@ body {
 
 /* Motion: staggered fade-up reveal on load, easeOutQuint */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-.top, .grid > .panel, .foot { animation: fadeUp .9s var(--ease) both; }
-.top { animation-delay: .04s; }
+.hero, .grid > .panel, .foot { animation: fadeUp .9s var(--ease) both; }
+.hero { animation-delay: .04s; }
+.hero-title { animation: fadeUp 1s var(--ease) both; animation-delay: .1s; }
+.hero-sub { animation: fadeUp 1s var(--ease) both; animation-delay: .18s; }
+.hero-cta { animation: fadeUp 1s var(--ease) both; animation-delay: .26s; }
 .grid > .panel:nth-child(1) { animation-delay: .14s; }
 .grid > .panel:nth-child(2) { animation-delay: .22s; }
 .foot { animation-delay: .3s; }
 
-/* Header */
-.top { max-width: 1040px; margin: 0 auto 34px; }
-.wordmark {
-  font-family: var(--font-head);
-  font-weight: 500;
-  font-size: clamp(40px, 8vw, 82px);
-  line-height: .9;
-  letter-spacing: -.04em;
-  display: flex; align-items: center; gap: 18px;
+/* Hero */
+.hero { max-width: 1040px; margin: 0 auto; padding: clamp(36px, 8vh, 92px) 0 clamp(30px, 6vh, 64px); }
+.eyebrow { display: inline-flex; align-items: center; gap: 9px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0 0 22px; }
+.eyebrow .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.hero-title {
+  font-family: var(--font-head); font-weight: 600;
+  font-size: clamp(48px, 11vw, 132px); line-height: .86; letter-spacing: -.045em;
+  margin: 0; text-wrap: balance;
 }
-.wordmark .dot {
-  width: clamp(14px, 2vw, 22px); height: clamp(14px, 2vw, 22px);
-  border-radius: 50%; background: var(--accent); flex: 0 0 auto;
-}
-.tag { color: var(--muted); margin: 16px 0 0; max-width: 520px; font-size: 16px; line-height: 1.5; }
+.hero-title em { font-style: normal; color: var(--accent); }
+.hero-sub { max-width: 560px; margin: 26px 0 0; font-size: clamp(16px, 2.3vw, 20px); line-height: 1.5; color: var(--muted); }
+.hero-cta { display: inline-flex; width: auto; margin-top: 30px; padding: 14px 26px; text-decoration: none; }
+.tool-heading { max-width: 1040px; margin: 0 auto 14px; font-family: var(--font-head); font-weight: 500; font-size: clamp(22px, 3vw, 30px); letter-spacing: -.02em; }
 
 /* Layout */
 .grid {
