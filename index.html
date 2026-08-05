@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fonepay QR Studio — rebrand your payment QR</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wordmark"><span class="dot"></span> Fonepay QR Studio</div>
+    <p class="tag">Upload your Fonepay QR, add your logo &amp; colours, download a branded one that pays the same account.</p>
+  </header>
+
+  <main class="grid">
+    <!-- Controls -->
+    <section class="panel">
+      <label class="drop" id="drop">
+        <input type="file" id="qrFile" accept="image/*" hidden>
+        <div class="drop-inner">
+          <div class="drop-ico">⬆</div>
+          <div><strong>Upload your Fonepay QR</strong></div>
+          <div class="muted">Drag an image here, or click to browse</div>
+        </div>
+      </label>
+
+      <div id="detected" class="banner" hidden></div>
+
+      <div id="controls" hidden>
+        <div class="field">
+          <label>Your logo (optional)</label>
+          <div class="row">
+            <label class="btn file">
+              <input type="file" id="logoFile" accept="image/*" hidden>
+              Choose logo
+            </label>
+            <button id="removeLogo" class="btn ghost" hidden>Remove</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="logoSize">Logo size</label>
+          <input type="range" id="logoSize" min="8" max="26" value="20">
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="fg">QR colour</label>
+            <input type="color" id="fg" value="#0a0a0b">
+          </div>
+          <div class="field">
+            <label for="bg">Background</label>
+            <input type="color" id="bg" value="#ffffff">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="caption">Caption</label>
+          <input type="text" id="caption" value="Scan to Pay" maxlength="40" placeholder="e.g. Scan to Pay">
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="showMerchant" checked>
+          Show merchant name <span class="muted" id="merchantLine"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Preview -->
+    <section class="panel preview">
+      <div id="empty" class="empty">
+        <div class="empty-qr"></div>
+        <p>Your branded QR previews here.</p>
+      </div>
+      <canvas id="canvas" aria-label="Branded QR preview"></canvas>
+      <div id="verify" class="verify" hidden></div>
+      <button id="download" class="btn primary" disabled>Download PNG</button>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Runs entirely in your browser — your QR is never uploaded anywhere.
+    Always test-scan the result before printing.
+  </footer>
+
+  <script src="lib/jsQR.js"></script>
+  <script src="lib/qrcode-generator.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
