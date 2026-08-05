@@ -14,7 +14,7 @@ const els = {
   dotShapeEl: $('dotShape'), eyeShapeEl: $('eyeShape'), presets: $('presets'), surprise: $('surprise'),
   logoSize: $('logoSize'), caption: $('caption'), merchant: $('merchant'),
   showMerchant: $('showMerchant'),
-  canvas: $('canvas'), download: $('download'), removeLogo: $('removeLogo'),
+  canvas: $('canvas'), download: $('download'), removeLogo: $('removeLogo'), format: $('format'),
   detected: $('detected'), verify: $('verify'), controls: $('controls'), empty: $('empty'),
 };
 
@@ -157,111 +157,87 @@ els.surprise.addEventListener('click', () => applyStyle(SURPRISE[Math.floor(Math
 ['logoSize', 'caption', 'merchant', 'showMerchant'].forEach((k) =>
   els[k].addEventListener('input', render));
 
-// ---- Draw the branded QR card ------------------------------------------------
-function render() {
-  if (!payload) return;
-
+// ---- Layout: all geometry for the card at a given pixel scale (k=1 = preview) -
+function layout(k) {
   const qr = window.qrcode(0, 'H'); // level H tolerates a center logo (~30% cover)
   qr.addData(payload);
   qr.make();
   const n = qr.getModuleCount();
-
-  const QR = 720;                 // QR draw size (px)
-  const quiet = 4;                // quiet-zone modules
-  const cell = QR / (n + quiet * 2);
-  const pad = 56;
-
+  const QR = 720 * k, quiet = 4, cell = QR / (n + quiet * 2), pad = 56 * k;
   const merchant = els.merchant.value.trim();
-  const showMerchant = els.showMerchant.checked && merchant;
-  const captionText = els.caption.value.trim();
-  const headerH = showMerchant ? 96 : 40;
-  const captionH = captionText ? 92 : 40;
+  const showMerchant = els.showMerchant.checked && !!merchant;
+  const caption = els.caption.value.trim();
+  const headerH = (showMerchant ? 96 : 40) * k;
+  const captionH = (caption ? 92 : 40) * k;
+  const W = QR + pad * 2, H = headerH + QR + captionH + pad;
+  const customEyes = !(dotShape === 'square' && eyeShape === 'square');
+  const finders = [[0, 0], [0, n - 7], [n - 7, 0]];
+  const logoFrac = Math.min(0.26, Number(els.logoSize.value) / 100); // ponytail: >~30% stops scanning
+  return {
+    k, qr, n, QR, quiet, cell, pad, ox: pad, oy: headerH, W, H,
+    merchant, showMerchant, caption, customEyes, finders, logoFrac,
+    fg: els.fg.value, fg2: els.fg2.value, bg: els.bg.value, tx: els.tx.value, gradient: els.gradient.checked,
+  };
+}
 
-  const W = QR + pad * 2;
-  const H = headerH + QR + captionH + pad;
+// ---- Draw the branded QR card to a canvas (used by preview and raster export) -
+function drawCard(ctx, k) {
+  const L = layout(k);
+  const { qr, n, QR, quiet, cell, ox, oy, W, H, k: s } = L;
+  ctx.canvas.width = W; ctx.canvas.height = H;
 
-  const cv = els.canvas;
-  cv.width = W; cv.height = H;
-  const ctx = cv.getContext('2d');
-  const fg = els.fg.value, bg = els.bg.value, textColor = els.tx.value;
-
-  // card
   ctx.clearRect(0, 0, W, H);
-  roundRect(ctx, 6, 6, W - 12, H - 12, 28);
-  ctx.fillStyle = bg;
-  ctx.fill();
+  roundRect(ctx, 6 * s, 6 * s, W - 12 * s, H - 12 * s, 28 * s);
+  ctx.fillStyle = L.bg; ctx.fill();
 
-  // header (merchant name)
-  if (showMerchant) {
-    ctx.fillStyle = textColor;
-    ctx.textAlign = 'center';
-    ctx.font = '700 40px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText(merchant, W / 2, pad + 30);
+  if (L.showMerchant) {
+    ctx.fillStyle = L.tx; ctx.textAlign = 'center';
+    ctx.font = `700 ${40 * s}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
+    ctx.fillText(L.merchant, W / 2, L.pad + 30 * s);
   }
 
-  // QR modules — shape + optional gradient. Finder "eyes" render solid so they
-  // stay scannable even when the body is dots/rounded.
-  const ox = pad, oy = headerH;
-  let fill = fg;
-  if (els.gradient.checked) {
+  let fill = L.fg;
+  if (L.gradient) {
     const g = ctx.createLinearGradient(ox, oy, ox + QR, oy + QR);
-    g.addColorStop(0, fg); g.addColorStop(1, els.fg2.value);
-    fill = g;
+    g.addColorStop(0, L.fg); g.addColorStop(1, L.fg2); fill = g;
   }
   ctx.fillStyle = fill;
 
-  const customEyes = !(dotShape === 'square' && eyeShape === 'square');
-  const finders = [[0, 0], [0, n - 7], [n - 7, 0]];
-  const inFinder = (r, c) => finders.some(([fr, fc]) => r >= fr && r < fr + 7 && c >= fc && c < fc + 7);
-
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      if (!qr.isDark(r, c)) continue;
-      if (customEyes && inFinder(r, c)) continue; // eyes drawn separately below
-      const x = ox + (c + quiet) * cell, y = oy + (r + quiet) * cell;
-      if (dotShape === 'dots') {
-        ctx.beginPath();
-        ctx.arc(x + cell / 2, y + cell / 2, cell * 0.5, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (dotShape === 'rounded') {
-        roundRect(ctx, x, y, cell, cell, cell * 0.38); ctx.fill();
-      } else {
-        ctx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(cell), Math.ceil(cell));
-      }
-    }
+  const inFinder = (r, c) => L.finders.some(([fr, fc]) => r >= fr && r < fr + 7 && c >= fc && c < fc + 7);
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    if (!qr.isDark(r, c)) continue;
+    if (L.customEyes && inFinder(r, c)) continue;
+    const x = ox + (c + quiet) * cell, y = oy + (r + quiet) * cell;
+    if (dotShape === 'dots') { ctx.beginPath(); ctx.arc(x + cell / 2, y + cell / 2, cell * 0.5, 0, Math.PI * 2); ctx.fill(); }
+    else if (dotShape === 'rounded') { roundRect(ctx, x, y, cell, cell, cell * 0.38); ctx.fill(); }
+    else ctx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(cell), Math.ceil(cell));
   }
-  if (customEyes) {
-    for (const [fr, fc] of finders) {
-      drawEye(ctx, ox + (fc + quiet) * cell, oy + (fr + quiet) * cell, cell, eyeShape, fill, bg);
-    }
+  if (L.customEyes) {
+    for (const [fr, fc] of L.finders) drawEye(ctx, ox + (fc + quiet) * cell, oy + (fr + quiet) * cell, cell, eyeShape, fill, L.bg);
     ctx.fillStyle = fill;
   }
 
-  // center logo
   if (logoImg) {
-    // ponytail: cap coverage at 26% — beyond ~30% even level-H stops scanning.
-    const frac = Math.min(0.26, Number(els.logoSize.value) / 100);
-    const size = QR * frac;
-    const cx = ox + quiet * cell + (n * cell) / 2;
-    const cy = oy + quiet * cell + (n * cell) / 2;
+    const size = QR * L.logoFrac;
+    const cx = ox + quiet * cell + (n * cell) / 2, cy = oy + quiet * cell + (n * cell) / 2;
     const box = size * 1.18;
     roundRect(ctx, cx - box / 2, cy - box / 2, box, box, box * 0.16);
-    ctx.fillStyle = bg;            // knock out modules behind the logo
-    ctx.fill();
+    ctx.fillStyle = L.bg; ctx.fill();
     const r = fitContain(logoImg, size, size);
     ctx.drawImage(logoImg, cx - r.w / 2, cy - r.h / 2, r.w, r.h);
   }
 
-  // caption
-  if (captionText) {
-    ctx.fillStyle = textColor;
-    ctx.textAlign = 'center';
-    ctx.font = '600 34px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText(captionText, W / 2, oy + QR + 56);
+  if (L.caption) {
+    ctx.fillStyle = L.tx; ctx.textAlign = 'center';
+    ctx.font = `600 ${34 * s}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
+    ctx.fillText(L.caption, W / 2, oy + QR + 56 * s);
   }
+}
 
+function render() {
+  if (!payload) return;
+  drawCard(els.canvas.getContext('2d'), 1);
   verify();
-  els.download.disabled = false;
 }
 
 // ---- Money-safety: confirm the rendered QR still scans to the same payload ----
@@ -282,13 +258,102 @@ function verify() {
   }
 }
 
-// ---- Download ----------------------------------------------------------------
+// ---- Export: PNG / JPG / WebP (raster, 3×) or SVG (true vector) ---------------
+const EXPORT_SCALE = 3; // 720 → 2160px QR — crisp for print
 els.download.addEventListener('click', () => {
-  const a = document.createElement('a');
-  a.download = 'fonepay-qr.png';
-  a.href = els.canvas.toDataURL('image/png');
-  a.click();
+  if (els.download.disabled || !payload) return;
+  const fmt = els.format.value;
+  const base = 'rebrand-fonepay-qr';
+
+  if (fmt === 'svg') {
+    const blob = new Blob([buildSVG()], { type: 'image/svg+xml' });
+    saveURL(`${base}.svg`, URL.createObjectURL(blob), true);
+    return;
+  }
+  const off = document.createElement('canvas');
+  drawCard(off.getContext('2d'), EXPORT_SCALE);
+  let url;
+  if (fmt === 'jpg') url = flattenWhite(off).toDataURL('image/jpeg', 0.95);
+  else if (fmt === 'webp') url = off.toDataURL('image/webp', 0.95);
+  else url = off.toDataURL('image/png');
+  saveURL(`${base}.${fmt}`, url, false);
 });
+
+function saveURL(filename, url, revoke) {
+  const a = document.createElement('a');
+  a.download = filename; a.href = url; a.click();
+  if (revoke) setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// JPG has no alpha — flatten the transparent card corners onto white.
+function flattenWhite(src) {
+  const c = document.createElement('canvas'); c.width = src.width; c.height = src.height;
+  const x = c.getContext('2d'); x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height);
+  x.drawImage(src, 0, 0); return c;
+}
+
+// ---- True-vector SVG export (mirrors drawCard geometry) ----------------------
+function buildSVG() {
+  const L = layout(1);
+  const { qr, n, QR, quiet, cell, ox, oy, W, H, pad } = L;
+  const fillRef = L.gradient ? 'url(#g)' : L.fg;
+  const font = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  const f = (v) => Number(v.toFixed(2));
+
+  const inFinder = (r, c) => L.finders.some(([fr, fc]) => r >= fr && r < fr + 7 && c >= fc && c < fc + 7);
+  let mods = '';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    if (!qr.isDark(r, c)) continue;
+    if (L.customEyes && inFinder(r, c)) continue;
+    const x = ox + (c + quiet) * cell, y = oy + (r + quiet) * cell;
+    if (dotShape === 'dots') mods += `<circle cx="${f(x + cell / 2)}" cy="${f(y + cell / 2)}" r="${f(cell * 0.5)}"/>`;
+    else if (dotShape === 'rounded') mods += `<rect x="${f(x)}" y="${f(y)}" width="${f(cell)}" height="${f(cell)}" rx="${f(cell * 0.38)}"/>`;
+    else mods += `<rect x="${f(x)}" y="${f(y)}" width="${f(cell + 0.5)}" height="${f(cell + 0.5)}"/>`;
+  }
+
+  let eyes = '';
+  if (L.customEyes) {
+    const rx = eyeShape === 'rounded';
+    const rect = (X, Y, S, fillv, r) => `<rect x="${f(X)}" y="${f(Y)}" width="${f(S)}" height="${f(S)}"${r ? ` rx="${f(r)}"` : ''} fill="${fillv}"/>`;
+    for (const [fr, fc] of L.finders) {
+      const x = ox + (fc + quiet) * cell, y = oy + (fr + quiet) * cell;
+      eyes += rect(x, y, 7 * cell, fillRef, rx ? cell * 1.75 : 0);
+      eyes += rect(x + cell, y + cell, 5 * cell, L.bg, rx ? cell * 1.15 : 0);
+      eyes += rect(x + 2 * cell, y + 2 * cell, 3 * cell, fillRef, rx ? cell * 0.75 : 0);
+    }
+  }
+
+  let logo = '';
+  if (logoImg) {
+    const size = QR * L.logoFrac;
+    const cx = ox + quiet * cell + (n * cell) / 2, cy = oy + quiet * cell + (n * cell) / 2;
+    const box = size * 1.18, r = fitContain(logoImg, size, size);
+    logo = `<rect x="${f(cx - box / 2)}" y="${f(cy - box / 2)}" width="${f(box)}" height="${f(box)}" rx="${f(box * 0.16)}" fill="${L.bg}"/>`
+      + `<image x="${f(cx - r.w / 2)}" y="${f(cy - r.h / 2)}" width="${f(r.w)}" height="${f(r.h)}" href="${logoDataURL()}"/>`;
+  }
+
+  let text = '';
+  if (L.showMerchant) text += `<text x="${W / 2}" y="${pad + 30}" text-anchor="middle" font-family="${font}" font-weight="700" font-size="40" fill="${L.tx}">${esc(L.merchant)}</text>`;
+  if (L.caption) text += `<text x="${W / 2}" y="${oy + QR + 56}" text-anchor="middle" font-family="${font}" font-weight="600" font-size="34" fill="${L.tx}">${esc(L.caption)}</text>`;
+
+  const defs = L.gradient
+    ? `<defs><linearGradient id="g" x1="${ox}" y1="${oy}" x2="${ox + QR}" y2="${oy + QR}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${L.fg}"/><stop offset="1" stop-color="${L.fg2}"/></linearGradient></defs>`
+    : '';
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
+    + defs
+    + `<rect x="6" y="6" width="${W - 12}" height="${H - 12}" rx="28" fill="${L.bg}"/>`
+    + `<g fill="${fillRef}">${mods}</g>${eyes}${logo}${text}</svg>`;
+}
+
+function esc(s) { return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+function logoDataURL() {
+  const c = document.createElement('canvas');
+  c.width = logoImg.naturalWidth || logoImg.width;
+  c.height = logoImg.naturalHeight || logoImg.height;
+  c.getContext('2d').drawImage(logoImg, 0, 0);
+  return c.toDataURL('image/png');
+}
 
 // ---- helpers -----------------------------------------------------------------
 function roundRect(ctx, x, y, w, h, r) {
