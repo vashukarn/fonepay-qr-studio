@@ -7,8 +7,9 @@ let logoImg = null;
 const $ = (id) => document.getElementById(id);
 const els = {
   qrFile: $('qrFile'), logoFile: $('logoFile'), drop: $('drop'),
-  fg: $('fg'), bg: $('bg'), logoSize: $('logoSize'), caption: $('caption'),
-  showMerchant: $('showMerchant'), merchantLine: $('merchantLine'),
+  fg: $('fg'), fgHex: $('fgHex'), bg: $('bg'), bgHex: $('bgHex'), tx: $('tx'), txHex: $('txHex'),
+  logoSize: $('logoSize'), caption: $('caption'), merchant: $('merchant'),
+  showMerchant: $('showMerchant'),
   canvas: $('canvas'), download: $('download'), removeLogo: $('removeLogo'),
   detected: $('detected'), verify: $('verify'), controls: $('controls'), empty: $('empty'),
 };
@@ -68,7 +69,7 @@ function showDetected(info) {
     ? `✓ ${kind} QR detected — pays ${bits.join(' · ') || 'this account'}. The redesign keeps this exact account.`
     : `⚠ Read a QR, but its checksum doesn't look like a standard Fonepay/EMV QR. You can still restyle it — just test-scan before using.`;
   // prefill merchant caption line
-  els.merchantLine.textContent = info.merchant || '';
+  if (info.merchant) els.merchant.value = info.merchant;
 }
 
 // ---- Logo --------------------------------------------------------------------
@@ -83,8 +84,22 @@ els.removeLogo.addEventListener('click', () => {
   logoImg = null; els.logoFile.value = ''; els.removeLogo.hidden = true; render();
 });
 
-// ---- Re-render on any control change -----------------------------------------
-['fg', 'bg', 'logoSize', 'caption', 'showMerchant'].forEach((k) =>
+// ---- Colour pickers with hex entry (kept in sync both ways) ------------------
+function bindColor(picker, hex) {
+  picker.addEventListener('input', () => { hex.value = picker.value; hex.classList.remove('invalid'); render(); });
+  hex.addEventListener('input', () => {
+    let v = hex.value.trim();
+    if (v && v[0] !== '#') v = '#' + v;
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) { picker.value = v; hex.classList.remove('invalid'); render(); }
+    else { hex.classList.add('invalid'); }
+  });
+}
+bindColor(els.fg, els.fgHex);
+bindColor(els.bg, els.bgHex);
+bindColor(els.tx, els.txHex);
+
+// ---- Re-render on any other control change -----------------------------------
+['logoSize', 'caption', 'merchant', 'showMerchant'].forEach((k) =>
   els[k].addEventListener('input', render));
 
 // ---- Draw the branded QR card ------------------------------------------------
@@ -101,7 +116,8 @@ function render() {
   const cell = QR / (n + quiet * 2);
   const pad = 56;
 
-  const showMerchant = els.showMerchant.checked && els.merchantLine.textContent;
+  const merchant = els.merchant.value.trim();
+  const showMerchant = els.showMerchant.checked && merchant;
   const captionText = els.caption.value.trim();
   const headerH = showMerchant ? 96 : 40;
   const captionH = captionText ? 92 : 40;
@@ -112,7 +128,7 @@ function render() {
   const cv = els.canvas;
   cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
-  const fg = els.fg.value, bg = els.bg.value;
+  const fg = els.fg.value, bg = els.bg.value, textColor = els.tx.value;
 
   // card
   ctx.clearRect(0, 0, W, H);
@@ -122,10 +138,10 @@ function render() {
 
   // header (merchant name)
   if (showMerchant) {
-    ctx.fillStyle = fg;
+    ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
     ctx.font = '700 40px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText(els.merchantLine.textContent, W / 2, pad + 30);
+    ctx.fillText(merchant, W / 2, pad + 30);
   }
 
   // QR modules
@@ -158,7 +174,7 @@ function render() {
 
   // caption
   if (captionText) {
-    ctx.fillStyle = fg;
+    ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
     ctx.font = '600 34px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
     ctx.fillText(captionText, W / 2, oy + QR + 56);

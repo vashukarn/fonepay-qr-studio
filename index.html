@@ -43,15 +43,31 @@
           <input type="range" id="logoSize" min="8" max="26" value="20">
         </div>
 
-        <div class="two">
-          <div class="field">
-            <label for="fg">QR colour</label>
+        <div class="field">
+          <label for="fg">QR colour</label>
+          <div class="color-row">
             <input type="color" id="fg" value="#0a0a0b">
+            <input type="text" id="fgHex" class="hex" value="#0a0a0b" maxlength="7" spellcheck="false" aria-label="QR colour hex">
           </div>
-          <div class="field">
-            <label for="bg">Background</label>
+        </div>
+        <div class="field">
+          <label for="bg">Background</label>
+          <div class="color-row">
             <input type="color" id="bg" value="#ffffff">
+            <input type="text" id="bgHex" class="hex" value="#ffffff" maxlength="7" spellcheck="false" aria-label="Background hex">
           </div>
+        </div>
+        <div class="field">
+          <label for="tx">Text colour</label>
+          <div class="color-row">
+            <input type="color" id="tx" value="#0a0a0b">
+            <input type="text" id="txHex" class="hex" value="#0a0a0b" maxlength="7" spellcheck="false" aria-label="Text colour hex">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="merchant">Merchant name</label>
+          <input type="text" id="merchant" maxlength="40" placeholder="e.g. DopeTech Nepal">
         </div>
 
         <div class="field">
@@ -61,7 +77,7 @@
 
         <label class="check">
           <input type="checkbox" id="showMerchant" checked>
-          Show merchant name <span class="muted" id="merchantLine"></span>
+          Show merchant name on the QR
         </label>
       </div>
     </section>
