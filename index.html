@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Google Tag Manager. Replace GTM-XXXXXXX with this site's own container,
+  <!-- Google Tag Manager. This site has its own container, kept
        separate from the portfolio and Buy Me a Chiya containers. -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+  })(window,document,'script','dataLayer','GTM-MTWSJGR3');</script>
   <!-- End Google Tag Manager -->
 
   <title>ReBrand Fonepay QR — Add Your Logo &amp; Colours to a Fonepay QR</title>
@@ -54,19 +54,105 @@
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "NPR" }
   }
   </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Will the branded QR still pay my account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, and the tool proves it rather than promising it. The design you download has been decoded back from its own pixels and matched against your original payload. If anything differs, the download is blocked. That said, always test-scan with your own phone before printing a hundred copies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my QR uploaded anywhere?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. There is no server to upload it to. The page loads, and everything after that happens in your browser using your own device. You can turn off your internet after the page loads and the tool still works."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it work with QRs from any bank or wallet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It works with any standard payment QR, including Fonepay QRs from Nepali banks and wallets, because it preserves whatever data is already encoded rather than rebuilding it. It also handles plain links, Wi-Fi codes and anything else a QR can carry."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How large can the logo be?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The slider stops at about a quarter of the code, because beyond roughly 30% even high error correction starts to fail. The tool uses the strongest correction level so a centre logo is safe, and the re-scan check catches anything that goes too far."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which format should I download?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SVG for anything printed, since it stays sharp at any size, from a business card to a shop banner. PNG for screens and social posts. JPG and WebP are there for when a platform insists on them. Raster exports render at 3x so they hold up in print."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. No account, no watermark, no limit on how many you make. The code is open source under the MIT licence, so you can read exactly what it does or run your own copy."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this made by Fonepay?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. It is an independent tool and is not affiliated with, endorsed by or connected to Fonepay Payment Service Ltd. or any bank. It re-renders a QR you already have and never moves money."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
   <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTWSJGR3"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <a class="skip" href="#tool">Skip to the tool</a>
+
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><img src="favicon.svg" alt="" width="26" height="26">ReBrand Fonepay QR</a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#safe">Is it safe?</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn primary" href="#tool">Rebrand mine</a>
+      </div>
+    </div>
+  </nav>
+
   <header class="hero">
     <p class="eyebrow"><span class="dot"></span> Free · Private · Runs in your browser</p>
     <h1 class="hero-title">ReBrand your <em>Fonepay</em> QR.</h1>
     <p class="hero-sub">Upload your Fonepay QR — or paste any link — then add your logo, colours and a style, and download a branded QR that pays the same account or opens the same link. Nothing leaves your device; it all happens right here in your browser.</p>
     <a href="#tool" class="btn primary hero-cta">Rebrand mine →</a>
   </header>
+
+  <div class="trust">
+    <div><b>0</b><span>uploads. It never leaves your device.</span></div>
+    <div><b>100%</b><span>verified. Every design is re-scanned.</span></div>
+    <div><b>4</b><span>formats, including true vector SVG.</span></div>
+    <div><b>Free</b><span>No account, no watermark, no limit.</span></div>
+  </div>
 
   <h2 class="tool-heading" id="tool">Rebrand your QR</h2>
   <main class="grid">
@@ -207,15 +293,143 @@
     </section>
   </main>
 
+
+  <section class="section" id="how">
+    <div class="section-head">
+      <p class="kicker">How it works</p>
+      <h2>Three steps, about <em>a minute</em>.</h2>
+      <p>No sign-up, no upload, no design skills. If you can pick a colour, you can do this.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="num">01</span>
+        <h3>Bring your QR</h3>
+        <p>Drop in a screenshot of your Fonepay QR, or paste any link and we will make one from scratch. Your existing QR is read on your own device.</p>
+      </div>
+      <div class="card">
+        <span class="num">02</span>
+        <h3>Make it yours</h3>
+        <p>Add your logo, your colours, a gradient, rounded dots, your business name and a caption. Or hit a preset and skip the fiddling.</p>
+      </div>
+      <div class="card">
+        <span class="num">03</span>
+        <h3>Check, then download</h3>
+        <p>The result is scanned back before you can save it. Download as PNG, JPG, WebP at 3x, or as an SVG that stays sharp on a shop banner.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="safe">
+    <div class="safety">
+      <div class="section-head">
+        <p class="kicker">Why you can trust it</p>
+        <h2>A pretty QR that <em>doesn't pay you</em> is worse than a plain one.</h2>
+        <p>This is money, so the tool refuses to hand you something it has not checked. Every time you change a colour, a shape or the logo size, the design is decoded again from the pixels, exactly as a customer's phone would read it.</p>
+      </div>
+      <div class="steps">
+        <div>
+          <b>It re-scans your design</b>
+          <p>The rendered QR is read back with the same decoder a phone camera uses, not simply assumed to be correct.</p>
+        </div>
+        <div>
+          <b>It compares the payload</b>
+          <p>The decoded result must match your original byte for byte. The same account, the same amount rules, the same link.</p>
+        </div>
+        <div>
+          <b>Download stays locked</b>
+          <p>If the two do not match, the button will not let you export. A broken or wrong QR cannot leave this page.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="uses">
+    <div class="section-head">
+      <p class="kicker">Who it is for</p>
+      <h2>Anywhere a plain QR looks <em>out of place</em>.</h2>
+      <p>The sticker from the bank works, but it is the same one on every counter in the country. Yours does not have to be.</p>
+    </div>
+    <div class="uses">
+      <span>Cafes and restaurants</span>
+      <span>Retail counters</span>
+      <span>Street stalls</span>
+      <span>Freelancers and invoices</span>
+      <span>Salons and clinics</span>
+      <span>Event stalls</span>
+      <span>Delivery riders</span>
+      <span>Instagram shops</span>
+      <span>Posters and standees</span>
+      <span>Business cards</span>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="section-head">
+      <p class="kicker">Questions</p>
+      <h2>The things people ask <em>first</em>.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Will the branded QR still pay my account?</summary>
+        <p>Yes, and the tool proves it rather than promising it. The design you download has been decoded back from its own pixels and matched against your original payload. If anything differs, the download is blocked. That said, always test-scan with your own phone before printing a hundred copies.</p>
+      </details>
+      <details>
+        <summary>Is my QR uploaded anywhere?</summary>
+        <p>No. There is no server to upload it to. The page loads, and everything after that happens in your browser using your own device. You can turn off your internet after the page loads and the tool still works.</p>
+      </details>
+      <details>
+        <summary>Does it work with QRs from any bank or wallet?</summary>
+        <p>It works with any standard payment QR, including Fonepay QRs from Nepali banks and wallets, because it preserves whatever data is already encoded rather than rebuilding it. It also handles plain links, Wi-Fi codes and anything else a QR can carry.</p>
+      </details>
+      <details>
+        <summary>How large can the logo be?</summary>
+        <p>The slider stops at about a quarter of the code, because beyond roughly 30% even high error correction starts to fail. The tool uses the strongest correction level so a centre logo is safe, and the re-scan check catches anything that goes too far.</p>
+      </details>
+      <details>
+        <summary>Which format should I download?</summary>
+        <p>SVG for anything printed, since it stays sharp at any size, from a business card to a shop banner. PNG for screens and social posts. JPG and WebP are there for when a platform insists on them. Raster exports render at 3x so they hold up in print.</p>
+      </details>
+      <details>
+        <summary>Is it really free?</summary>
+        <p>Yes. No account, no watermark, no limit on how many you make. The code is open source under the MIT licence, so you can read exactly what it does or run your own copy.</p>
+      </details>
+      <details>
+        <summary>Is this made by Fonepay?</summary>
+        <p>No. It is an independent tool and is not affiliated with, endorsed by or connected to Fonepay Payment Service Ltd. or any bank. It re-renders a QR you already have and never moves money.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2>Your counter, your colours.</h2>
+    <p>Free, private and checked before you download. It takes about a minute.</p>
+    <a href="#tool" class="btn primary hero-cta">Rebrand my QR →</a>
+  </section>
+
   <footer class="foot">
     <p>Runs entirely in your browser — your QR is never uploaded anywhere.
     Always test-scan the result before printing.</p>
+    <p class="links">
+      <a href="#how">How it works</a>
+      <a href="#safe">Is it safe?</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/vashukarn/fonepay-qr-studio" target="_blank" rel="noopener">Source</a>
+    </p>
+    <p>Not affiliated with Fonepay Payment Service Ltd. or any bank.</p>
     <p class="credit">Collecting tips rather than payments?
       <a href="https://buymeachiya.vijaykarn.com.np/" target="_blank" rel="noopener">Buy Me a Chiya</a>
       turns your eSewa or Khalti details into a shareable page, free.</p>
     <p class="credit">Made with <span aria-hidden="true">❤️</span><span class="sr-only">love</span> by
       <a href="https://vijaykarn.com.np/" target="_blank" rel="noopener">Vashu Karn</a></p>
   </footer>
+
+  <script>
+    // hairline under the nav only once the page has moved
+    var nav = document.getElementById('nav');
+    addEventListener('scroll', function () {
+      nav.classList.toggle('stuck', scrollY > 8);
+    }, { passive: true });
+  </script>
 
   <script src="lib/jsQR.js"></script>
   <script src="lib/qrcode-generator.js"></script>
