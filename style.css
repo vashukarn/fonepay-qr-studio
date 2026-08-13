@@ -335,3 +335,31 @@ html { scroll-behavior: smooth; }
 .legal .callout { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin: 0 0 26px; }
 .legal .callout b { display: block; font-family: var(--font-head); font-weight: 500; font-size: 16px; color: var(--ink); margin-bottom: 8px; }
 .legal .callout p:last-child { margin-bottom: 0; }
+
+/* ---- Landing polish -------------------------------------------------
+   .btn.primary is full-width by design for the tool's Download button, and
+   it out-specifies .hero-cta, so every marketing button was stretching to
+   the full 1040px column. These hug their label instead. */
+.btn.primary.hero-cta { width: auto; margin-top: 30px; }
+.nav-links .btn.primary { width: auto; margin-top: 0; }
+.cta-band .btn.primary { width: auto; margin-top: 4px; }
+
+/* The tool heading sat flush against the trust strip */
+.tool-heading { margin-top: clamp(44px, 7vw, 76px); }
+
+/* Nav: keep labels on one line and stop the row wrapping at middling widths */
+.nav-inner { flex-wrap: nowrap; }
+.nav-links a { white-space: nowrap; }
+@media (max-width: 940px) { .nav-links { gap: 16px; } }
+
+/* Headings had a 620px cap that broke short lines awkwardly */
+.section-head { max-width: 700px; }
+
+/* Wayfinding: mark the section currently in view */
+.nav-links a[aria-current="true"] { color: var(--accent); }
+
+/* Respect reduced motion for the new sections too */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .card, .uses span, .faq details { transition: none; }
+}
