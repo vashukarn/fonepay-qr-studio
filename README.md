@@ -7,7 +7,7 @@ business name and caption, style it (dot/eye shapes, gradient, presets), and dow
 
 Everything runs in the browser — nothing is uploaded to a server.
 
-> **Status:** built, not yet deployed. Planned home: `rebrandfonepayqr.vijaykarn.com.np`.
+> **Status:** live at https://rebrandfonepayqr.vijaykarn.com.np
 > For now, [run it locally](#run-it).
 
 ## Features
@@ -70,3 +70,8 @@ self-hosted in `lib/fonts/` so there is **no CDN at runtime**.
 ## Note
 
 It's a payment QR — **always test-scan the downloaded image** before printing or sharing.
+
+## Licence
+
+MIT, see `LICENSE`. Third-party components (qrcode-generator, jsQR, and the
+Fontshare typefaces) keep their own licences, listed there.
