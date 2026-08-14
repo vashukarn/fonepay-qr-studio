@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family:"Clash Display"; src:url("lib/fonts/clash-display-600.woff2") format("woff2"); font-weight:600; }
+@font-face { font-family:"Clash Display"; src:url("lib/fonts/clash-display-500.woff2") format("woff2"); font-weight:500; }
+@font-face { font-family:"Switzer"; src:url("lib/fonts/switzer-300.woff2") format("woff2"); font-weight:300; }
+@font-face { font-family:"Switzer"; src:url("lib/fonts/switzer-400.woff2") format("woff2"); font-weight:400; }
+@font-face { font-family:"Switzer"; src:url("lib/fonts/switzer-500.woff2") format("woff2"); font-weight:500; }
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1200px;height:1200px;overflow:hidden}
+body{
+  background:#f1f1f1;color:#2b2b2b;font-family:"Switzer",system-ui,sans-serif;font-weight:300;
+  padding:86px 78px;display:flex;flex-direction:column;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:11px;align-self:flex-start;
+  font-family:ui-monospace,monospace;font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:#656565;
+}
+.eyebrow .dot{width:12px;height:12px;border-radius:50%;background:#fc4778}
+
+h1{
+  font-family:"Clash Display",sans-serif;font-weight:600;letter-spacing:-.035em;
+  font-size:104px;line-height:.98;margin-top:40px;
+}
+h1 em{font-style:normal;color:#fc4778}
+
+.sub{font-size:29px;line-height:1.45;color:#656565;margin-top:34px;max-width:24ch}
+.sub b{color:#2b2b2b;font-weight:500}
+
+.mid{display:flex;align-items:center;gap:44px;margin-top:auto;margin-bottom:auto}
+
+/* the verification story, told as a chip row */
+.checks{flex:1;display:grid;gap:14px}
+.check{
+  background:#fff;border:1px solid #dedede;border-radius:16px;padding:20px 22px;
+  display:flex;align-items:center;gap:16px;
+}
+.check .tick{
+  flex:none;width:34px;height:34px;border-radius:50%;background:#fc4778;color:#fff;
+  display:grid;place-items:center;font-size:19px;font-weight:500;
+}
+.check span{font-size:22px;font-weight:400}
+
+/* a stylised branded QR, drawn not screenshotted */
+.qr{
+  flex:none;width:330px;height:330px;background:#fff;border:1px solid #dedede;border-radius:26px;
+  padding:26px;box-shadow:0 30px 60px -30px rgba(43,43,43,.45);
+  display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);gap:7px;
+}
+.qr i{border-radius:5px;background:#2b2b2b;display:block}
+.qr i.a{background:#fc4778}
+.qr i.o{background:transparent}
+.qr .eye{grid-column:span 3;grid-row:span 3;border:9px solid #2b2b2b;border-radius:16px;background:transparent}
+.qr .eye.p{border-color:#fc4778}
+
+.foot{display:flex;align-items:center;justify-content:space-between;gap:24px;border-top:2px solid #dedede;padding-top:32px}
+.url{
+  font-family:ui-monospace,monospace;font-size:25px;letter-spacing:.02em;
+  background:#fc4778;color:#fff;border-radius:12px;padding:14px 20px;
+}
+.by{font-family:"Clash Display",sans-serif;font-weight:500;font-size:25px;color:#656565}
+</style>
+</head>
+<body>
+  <p class="eyebrow"><span class="dot"></span> Free · Private · In your browser</p>
+
+  <h1>Brand your payment QR.<br><em>Without breaking it.</em></h1>
+  <p class="sub">Add your logo and colours to a Fonepay QR, and <b>keep the account it pays</b>.</p>
+
+  <div class="mid">
+    <div class="checks">
+      <div class="check"><span class="tick">✓</span><span>Re-scanned after every change</span></div>
+      <div class="check"><span class="tick">✓</span><span>Matched against the original</span></div>
+      <div class="check"><span class="tick">✓</span><span>Download blocked if it differs</span></div>
+    </div>
+
+    <div class="qr" aria-hidden="true">
+      <div class="eye"></div><i class="o"></i><i></i><i class="a"></i><i class="o"></i><div class="eye p"></div>
+      <i></i><i class="o"></i><i class="a"></i>
+      <i class="o"></i><i></i><i></i>
+      <i class="a"></i><i></i><i class="o"></i><i></i><i class="a"></i><i class="o"></i>
+      <i></i><i class="o"></i><i></i><i class="a"></i><i></i><i class="o"></i>
+      <div class="eye"></div><i></i><i class="a"></i><i class="o"></i><i></i><i></i>
+      <i class="o"></i><i></i><i class="a"></i>
+      <i></i><i class="a"></i><i class="o"></i><i></i><i class="o"></i><i></i>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="url">rebrandfonepayqr.vijaykarn.com.np</span>
+    <span class="by">Free · Open source</span>
+  </div>
+</body>
+</html>
